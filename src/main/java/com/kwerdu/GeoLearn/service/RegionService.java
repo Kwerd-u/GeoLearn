@@ -5,7 +5,6 @@ import com.kwerdu.GeoLearn.repository.RegionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RegionService {
@@ -31,5 +30,9 @@ public class RegionService {
     public void update(int id, Region region){
         region.setId(id);
         regionRepository.save(region);
+    }
+
+    public void deleteById(int id) {
+        regionRepository.deleteById(id);
     }
 }
