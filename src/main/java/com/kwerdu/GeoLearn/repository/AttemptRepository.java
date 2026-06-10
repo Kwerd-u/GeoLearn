@@ -13,4 +13,5 @@ public interface AttemptRepository extends JpaRepository<Attempt, Integer> {
     List<Attempt> findByUser(User user);
     List<Attempt> findByUserAndRegion(User user, Region region);
     List<Attempt> findTop10ByUserAndRegionOrderByCreatedAtDesc(User user, Region region);
+    List<Attempt> findByUserAndRegion_Id(User user, int regionId);
 }

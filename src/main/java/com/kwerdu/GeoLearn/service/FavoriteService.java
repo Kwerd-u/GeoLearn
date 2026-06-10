@@ -1,7 +1,11 @@
 package com.kwerdu.GeoLearn.service;
 
 import com.kwerdu.GeoLearn.model.Favorite;
+import com.kwerdu.GeoLearn.model.Region;
+import com.kwerdu.GeoLearn.model.User;
 import com.kwerdu.GeoLearn.repository.FavoriteRepository;
+import com.kwerdu.GeoLearn.repository.RegionRepository;
+import com.kwerdu.GeoLearn.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,34 +13,38 @@ import java.util.List;
 @Service
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
+    private final UserRepository userRepository;
+    private final RegionRepository regionRepository;
 
-    public FavoriteService(FavoriteRepository favoriteRepository){
+    public FavoriteService(FavoriteRepository favoriteRepository, UserRepository userRepository, RegionRepository regionRepository) {
         this.favoriteRepository = favoriteRepository;
+        this.userRepository = userRepository;
+        this.regionRepository = regionRepository;
     }
 
-    public List<Favorite> getAll(){
-        return favoriteRepository.findAll();
-    }
+    public void add(int userId, int regionId) {
+        if (favoriteRepository.existsByUser_IdAndRegion_Id(userId, regionId)) {
+            return;
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        Region region = regionRepository.findById(regionId)
+                .orElseThrow(() -> new RuntimeException("Регион не найден"));
 
-    public Favorite getById(int id){
-        return favoriteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Избранный регион не найден"));
-    }
-
-    public void create(Favorite favorite){
+        Favorite favorite = new Favorite();
+        favorite.setUser(user);
+        favorite.setRegion(region);
         favoriteRepository.save(favorite);
     }
 
-    public void update(int id, Favorite favorite){
-        favorite.setId(id);
-        favoriteRepository.save(favorite);
+    public void remove(int userId, int regionId) {
+        favoriteRepository.deleteByUser_IdAndRegion_Id(userId, regionId);
     }
 
-    public void delete(Favorite favorite){
-        favoriteRepository.delete(favorite);
-    }
-
-    public void deleteById(int id){
-        favoriteRepository.deleteById(id);
+    public List<Region> getAll(int userId) {
+        return favoriteRepository.findByUser_Id(userId)
+                .stream()
+                .map(Favorite::getRegion)
+                .toList();
     }
 }

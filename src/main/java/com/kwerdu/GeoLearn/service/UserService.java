@@ -1,11 +1,14 @@
 package com.kwerdu.GeoLearn.service;
 
+import com.kwerdu.GeoLearn.controller.UserController;
+import com.kwerdu.GeoLearn.dto.UserDto;
 import com.kwerdu.GeoLearn.model.User;
 import com.kwerdu.GeoLearn.model.enums.Role;
 import com.kwerdu.GeoLearn.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.kwerdu.GeoLearn.security.JWTService;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -62,5 +65,12 @@ public class UserService {
     public User getByNick(String nick){
         return userRepository.findByNick(nick)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+    }
+
+    public List<UserDto> getAll(){
+        return userRepository.findAll()
+                .stream()
+                .map(u -> new UserDto(u.getId(), u.getNick(), u.getRole().name()))
+                .toList();
     }
 }

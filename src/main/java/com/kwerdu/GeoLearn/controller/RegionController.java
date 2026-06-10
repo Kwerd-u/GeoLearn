@@ -3,6 +3,7 @@ package com.kwerdu.GeoLearn.controller;
 import com.kwerdu.GeoLearn.model.Region;
 import com.kwerdu.GeoLearn.service.RegionService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +19,12 @@ public class RegionController {
     }
 
     @GetMapping
-    public List<Region> getAll() {
-        return regionService.getAll();
+    public List<Region> getAll(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) String districts,
+            @RequestParam(defaultValue = "name") String sortBy) {
+        return regionService.getAll(page, size, districts, sortBy);
     }
 
     @GetMapping("/{id}")
@@ -44,4 +49,19 @@ public class RegionController {
     public void delete(@PathVariable int id) {
         regionService.deleteById(id);
     }
+
+    @GetMapping("/last")
+    public Region getLast() {
+        return regionService.getLast();
+    }
+
+    @PatchMapping("/{id}/name")
+    public void rename(@PathVariable int id, @RequestBody String name, Authentication auth) {
+        if (auth.getAuthorities().stream()
+                .noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("Нет прав");
+        }
+        regionService.rename(id, name);
+    }
+
 }

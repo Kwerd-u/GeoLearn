@@ -4,6 +4,8 @@ import com.kwerdu.GeoLearn.model.RegionFeatureValue;
 import com.kwerdu.GeoLearn.repository.RegionFeatureValueRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RegionFeatureValueService {
 
@@ -17,5 +19,9 @@ public class RegionFeatureValueService {
         RegionFeatureValue newRegionFeatureValue = regionFeatureValueRepository.findByRegion_IdAndFeatureDefinition_Id(regionId, featureDefinitionId);
         newRegionFeatureValue.setValue(value);
         regionFeatureValueRepository.save(newRegionFeatureValue);
+    }
+
+    public List<RegionFeatureValue> getByRegionId(int regionId) {
+        return regionFeatureValueRepository.findByRegion_Id(regionId);
     }
 }

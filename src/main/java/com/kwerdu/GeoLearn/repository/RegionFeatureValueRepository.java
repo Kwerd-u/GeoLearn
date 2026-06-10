@@ -10,4 +10,5 @@ import java.util.List;
 public interface RegionFeatureValueRepository extends JpaRepository<RegionFeatureValue, Integer> {
     List<RegionFeatureValue> findByFeatureDefinition_Id(int id);
     RegionFeatureValue findByRegion_IdAndFeatureDefinition_Id(int regionId, int featureDefinitionId);
+    List<RegionFeatureValue> findByRegion_Id(int regionId);
 }
